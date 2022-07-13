@@ -1,0 +1,89 @@
+@import './variables.less';
+@import '../pages/chatPage/chatPage';
+@import "../pages/chatPage/modal.less";
+
+// btns, inputs
+.input {
+  &__search {
+    border: none;
+    background-color: @darkblue;
+    color: @font-color;
+    outline: none;
+    padding: 10px;
+
+    &::placeholder {
+      color: @gray;
+      font-weight: 500;
+    }
+
+    &:focus {
+      box-shadow: 0 0 5px rgb(0, 100, 179);
+    }
+  }
+}
+
+.button {
+  background-color: transparent;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+
+.profile {
+  &-content {
+    width: 100%;
+    padding: 60px;
+  }
+
+  &-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: @darkblue;
+    border-radius: 50%;
+    width: 130px;
+    height: 130px;
+    margin-bottom: 40px;
+  }
+
+  &-title {
+    margin-bottom: 40px;
+  }
+
+  &-form-wrap {
+    border: 1px solid rgba(138, 196, 255, 0.3);
+  }
+
+  &-form {
+    align-items: center;
+    max-width: 510px;
+    & > div {
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  &-form-group {
+    margin-bottom: 20px;
+  }
+
+  &-form-input {
+    text-align: right;
+    color: @gray;
+  }
+
+  &-form-label {
+    font-size: 13px;
+    top: 6px;
+    color: @font-color;
+  }
+
+  &-btn {
+    width: 75%;
+    margin-top: 30px;
+  }
+
+  &-error {
+    color: @tomato;
+  }
+}

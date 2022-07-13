@@ -1,0 +1,83 @@
+@import '../../styles/general.less';
+
+// login-page.html > form
+
+.form {
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+  width: 100%;
+
+  &-wrap {
+    border-radius: 12px;
+    border: 1px solid @lightgray;
+    min-width: 320px;
+    padding: 30px;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+    box-shadow: 0 -2px 30px rgba(0, 0, 0, .8);
+    & > div {
+      width: 100%;
+    }
+  }
+
+
+  &-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 40px;
+  }
+
+  &-label {
+    font-size: 11px;
+    color: @gray;
+    position: absolute;
+    top: -12px;
+    left: 5px;
+  }
+
+  &-input {
+    border-bottom: 1px solid;
+    border-bottom-color: @lightblue;
+    width: 97%;
+
+    &::placeholder {
+      color: @gray;
+    }
+
+    &_error {
+      border-bottom-color: @tomato;
+    }
+  }
+
+  &-btn {
+    &-submit {
+      padding: 12px;
+      background-color: @lightblue;
+      border-radius: 8px;
+    }
+
+    &-option {
+      background-color: transparent;
+      color: @lightblue;
+      margin-top: 20px;
+    }
+
+    &-cancel {
+      background-color: @tomato;
+      border-radius: 8px;
+      padding: 12px;
+    }
+  }
+
+  //&-error {
+  //  color: @tomato;
+  //  font-size: 11px;
+  //  position: absolute;
+  //  top: 32px;
+  //  display: none;
+  //}
+}
