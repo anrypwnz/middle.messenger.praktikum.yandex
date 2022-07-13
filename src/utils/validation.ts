@@ -1,11 +1,11 @@
-const isEmail = (email: string): string => {
+const isEmail = (email: string): boolean => {
     const reg = /^(?!.*(\.\.))[a-zA-Z0-9]+[-_\.\dA-Za-z]*@[a-zA-Z\d]+[-_\da-z]*\.[a-z]+$/;
-    return reg.test(email) ? '' : 'Некорректный email.'
+    return reg.test(email)
 };
 
-const isPhone = (phone: string): string => {
+const isPhone = (phone: string): boolean => {
     const reg = /^(\+{0,})(\d{0,})([(]{1}\d{1,3}[)]{0,}){0,}(\s?\d+|\+\d{2,3}\s{1}\d+|\d+){1}[\s|-]?\d+([\s|-]?\d+){1,2}(\s){0,}$/gm;
-    return reg.test(phone) ? '' : 'Некорректный номер телефона'
+    return reg.test(phone)
 }
 
 const isPassword = (password: string): string => {
@@ -13,33 +13,59 @@ const isPassword = (password: string): string => {
     return reg.test(password) ? '' : 'Некорректный пароль'
 }
 
-const isValidName = (name: string): string => {
+const isValidName = (name: string): boolean => {
     const reg = /^[0-9А-Яа-яa-zA-Z_.-]+$/
-    return reg.test(name) ? '' : 'Некорректное имя'
+    return reg.test(name)
 }
 
-const isValidLogin = (login: string): string => {
+const isValidLogin = (login: string): boolean => {
     const reg = /^[0-9a-zA-Z_.-]+$/
-    return reg.test(login) ? '' : 'Некорректный логин'
+    return reg.test(login)
 }
-
-const validate = (target: HTMLInputElement): string => {
-    switch (target.id) {
+let errors: string[] = [];
+const validate = (target: HTMLInputElement): string[] => {
+    const {id, value} = target
+    switch (id) {
         case 'email':
-            return isEmail(target.value)
+            if (!isEmail(value)) {
+                errors.find(i => i == id) || errors.push(id)
+            } else {
+                errors = errors.filter(i => i !== id)
+            }
+            return errors;
         case 'phone':
-            return isPhone(target.value)
+            if (!isPhone(value)) {
+                errors.find(i => i == id) || errors.push(id)
+            } else {
+                errors = errors.filter(i => i !== id)
+            }
+            return errors;
         case 'password':
         case 'password-repeat':
-            return isPassword(target.value);
-        case 'first_name':
-        case 'second_name':
+            if (!isPassword(value)) {
+                errors.find(i => i == id) || errors.push(id)
+            } else {
+                errors = errors.filter(i => i !== id)
+            }
+            return errors;
+        case 'first-name':
+        case 'second-name':
         case 'nickname':
-            return isValidName(target.value)
+            if (!isValidName(value)) {
+                errors.find(i => i == id) || errors.push(id)
+            } else {
+                errors = errors.filter(i => i !== id)
+            }
+            return errors;
         case 'login':
-            return isValidLogin(target.value)
+            if (!isValidLogin(value)) {
+                errors.find(i => i == id) || errors.push(id)
+            } else {
+                errors = errors.filter(i => i !== id)
+            }
+            return errors;
         default:
-            return 'No such ID';
+            return errors;
     }
 }
 export default validate

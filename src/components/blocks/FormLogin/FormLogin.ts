@@ -20,12 +20,19 @@ export default class FormLogin extends Block {
 
     onSubmit(e: Event): void {
         e.preventDefault()
-        const formElement = this.element.getElementsByTagName('input')
-        const formData: any = {}
-        for (const element of formElement) {
+        const formElements = this.element.getElementsByTagName('input')
+        let errors: string[] = []
+        const formData: string[] = []
+
+        for (const element of formElements) {
             formData[element.name] = element.value
+            this.onValidate(element)
+            errors = errors.concat(validate(element))
         }
-        console.log('Input Value', formData);
+
+        if (!errors.length) {
+            console.log('####### formData ', formData)
+        }
     }
 
     onSignUp(e: Event): void {
@@ -34,20 +41,25 @@ export default class FormLogin extends Block {
     }
 
     onBlur(e: Event): void {
-        this.onValidate(e)
+        const target = e.target as HTMLInputElement;
+        this.onValidate(target)
     }
 
     onFocus(e: Event): void {
-        this.onValidate(e)
+        const target = e.target as HTMLInputElement;
+        this.onValidate(target)
     }
 
-    onValidate(e: Event): void {
-        const target = e.target as HTMLInputElement;
-        validate(target)
-        const errorField = document.getElementById('login-error')
-        if (errorField) {
-            errorField.textContent = validate(target)
-        }
+    onValidate(e: HTMLInputElement): void {
+        const formErrors = document.querySelectorAll<HTMLElement>('.form-error')
+        const errors = validate(e)
+        formErrors.forEach(i => {
+            i.style.display = 'none'
+        })
+        errors.forEach((i: string) => {
+            const errorField = document.getElementById(`error-${i}`)
+            errorField && (errorField.style.display = 'block')
+        })
     }
 
     protected render(): DocumentFragment {

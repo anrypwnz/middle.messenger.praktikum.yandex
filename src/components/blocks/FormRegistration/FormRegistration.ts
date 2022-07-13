@@ -24,12 +24,19 @@ export default class FormRegistration extends Block {
 
     onSubmit(e: Event): void {
         e.preventDefault()
-        const formElement = this.element.getElementsByTagName('input')
-        const formData: any = {}
-        for (const element of formElement) {
+        const formElements = this.element.getElementsByTagName('input')
+        const formData: string[] = []
+        let errors: string[] = []
+
+        for (const element of formElements) {
             formData[element.name] = element.value
+            this.onValidate(element)
+            errors = errors.concat(validate(element))
         }
-        console.log('onSubmit', formData);
+
+        if (!errors.length) {
+            console.log('####### formData ', formData)
+        }
     }
 
     onSignIn(e: Event): void {
@@ -38,19 +45,26 @@ export default class FormRegistration extends Block {
     }
 
     onBlur(e: Event): void {
-        this.onValidate(e)
+        const target = e.target as HTMLInputElement;
+        this.onValidate(target)
     }
 
     onFocus(e: Event): void {
-        this.onValidate(e)
+        const target = e.target as HTMLInputElement;
+        this.onValidate(target)
     }
 
-    onValidate(e: Event): void {
-        const target = e.target as HTMLInputElement;
-        const errorField = document.getElementById('error-login')
-        if (errorField) {
-            errorField.textContent = validate(target)
-        }
+    onValidate(e: HTMLInputElement): void {
+
+        const errors = validate(e)
+        const formErrors = document.querySelectorAll<HTMLElement>('.form-error')
+        formErrors.forEach(i => {
+            i.style.display = 'none'
+        })
+        errors.forEach(i => {
+            const errorField = document.getElementById(`error-${i}`)
+            errorField && (errorField.style.display = 'block')
+        })
     }
 
     protected render(): DocumentFragment {
@@ -104,11 +118,11 @@ export default class FormRegistration extends Block {
         })
 
         const inputFirstName = new Input({
-            id: 'first_name',
+            id: 'first-name',
             inputClass: 'form-input',
             labelClass: 'form-label',
             label: 'Имя',
-            name: 'first_name',
+            name: 'first-name',
             type: 'text',
             value: this.props.firstName,
             events: {
@@ -118,11 +132,11 @@ export default class FormRegistration extends Block {
         })
 
         const inputSecondName = new Input({
-            id: 'second_name',
+            id: 'second-name',
             inputClass: 'form-input',
             labelClass: 'form-label',
             label: 'Фамилия',
-            name: 'second_name',
+            name: 'second-name',
             type: 'text',
             value: this.props.secondName,
             events: {
