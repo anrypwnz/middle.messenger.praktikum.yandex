@@ -12,7 +12,7 @@
     "develop": "nodemon -e js,html,less server.js",
     "build": " npm run clear && parcel build ./src/index.html",
     "clear": "rm -rf dist .cache",
-    "lint:css": "npx stylelint '**/*.css'",
+    "lint:css": "npx stylelint './src/**/*.less'",
     "lint:css-fix": "npx stylelint '**/*.css' --fix"
   },
   "repository": {
