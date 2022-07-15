@@ -7,9 +7,38 @@ import LoginPage from '../login/LoginPage';
 import RegistrationPage from '../registration/RegistrationPage';
 import ChatPage from '../chatPage/ChatPage';
 import ErrorPage from '../404/404';
-import serverErrorPage from '../500/500';
+import ServerErrorPage from '../500/500';
 import ProfilePage from '../profile/ProfilePage';
 import '../../styles/general.less';
+import Router from '../../utils/Router'
+
+const router = new Router({
+    mode: 'history',
+    root: '/',
+})
+
+router
+    .add('/', () => {
+        render('#app', new IndexPage())
+    })
+    .add(/signin/, () => {
+        render('#app', new LoginPage())
+    })
+    .add(/signup/, () => {
+        render('#app', new RegistrationPage())
+    })
+    .add(/profile/, () => {
+        render('#app', new ProfilePage())
+    })
+    .add(/chat/, () => {
+        render('#app', new ChatPage())
+    })
+    .add(/404/, () => {
+        render('#app', new ErrorPage())
+    })
+    .add(/500/, () => {
+        render('#app', new ServerErrorPage)
+    })
 
 export class IndexPage extends Block {
     constructor() {
@@ -21,42 +50,42 @@ export class IndexPage extends Block {
             text: 'Login Page',
             class: 'btn-pages',
             events: {
-                click: () => render('#app', new LoginPage())
+                click: () => router.navigate('/signin/')
             }
         })
         const registrationButton = new Button({
             text: 'Registration Page',
             class: 'btn-pages',
             events: {
-                click: () => render('#app', new RegistrationPage())
+                click: () => router.navigate('/signup/')
             }
         })
         const chatPageButton = new Button({
             text: 'Chat Page',
             class: 'btn-pages',
             events: {
-                click: () => render('#app', new ChatPage())
+                click: () => router.navigate('/chat/')
             }
         })
         const profilePageButton = new Button({
             text: 'Profile Page',
             class: 'btn-pages',
             events: {
-                click: () => render('#app', new ProfilePage())
+                click: () => router.navigate('/profile/')
             }
         })
         const errorPageButton = new Button({
             text: '404 error Page',
             class: 'btn-pages',
             events: {
-                click: () => render('#app', new ErrorPage())
+                click: () => router.navigate('/404/')
             }
         })
         const serverErrorPageButton = new Button({
             text: '500 error Page',
             class: 'btn-pages',
             events: {
-                click: () => render('#app', new serverErrorPage())
+                click: () => router.navigate('/500/')
             }
         })
 
