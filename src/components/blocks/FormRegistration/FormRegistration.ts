@@ -7,6 +7,7 @@ import {render} from '../../../index';
 import LoginPage from '../../../pages/login/LoginPage';
 import '../FormLogin/FormLogin.less'
 import validate from '../../../utils/validation';
+import onValidate from '../../../utils/onValidate';
 
 export default class FormRegistration extends Block {
     constructor() {
@@ -30,8 +31,8 @@ export default class FormRegistration extends Block {
 
         for (const element of formElements) {
             formData[element.name] = element.value
-            this.onValidate(element)
-            errors = errors.concat(validate(element))
+            element && (errors = errors.concat(validate(element)))
+            onValidate(e)
         }
 
         if (!errors.length) {
@@ -45,26 +46,11 @@ export default class FormRegistration extends Block {
     }
 
     onBlur(e: Event): void {
-        const target = e.target as HTMLInputElement;
-        this.onValidate(target)
+        onValidate(e)
     }
 
     onFocus(e: Event): void {
-        const target = e.target as HTMLInputElement;
-        this.onValidate(target)
-    }
-
-    onValidate(e: HTMLInputElement): void {
-
-        const errors = validate(e)
-        const formErrors = document.querySelectorAll<HTMLElement>('.form-error')
-        formErrors.forEach(i => {
-            i.style.display = 'none'
-        })
-        errors.forEach(i => {
-            const errorField = document.getElementById(`error-${i}`)
-            errorField && (errorField.style.display = 'block')
-        })
+        onValidate(e)
     }
 
     protected render(): DocumentFragment {

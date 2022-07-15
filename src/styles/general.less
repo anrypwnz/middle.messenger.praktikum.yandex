@@ -8,14 +8,14 @@ body {
 }
 
 input {
-  background-color: #1b2e42;
+  background-color: @background;
   border: none;
   outline: none;
   color: @font-color;
   padding: 5px;
 
   &-webkit-autofill {
-    background-color: #999;
+    background-color: @gray;
   }
 }
 
@@ -24,7 +24,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
-  -webkit-text-fill-color: #fffafa;
+  -webkit-text-fill-color: @font-color;
 }
 
 button {
@@ -52,7 +52,7 @@ button {
     color: @font-color;
 
     &:hover {
-      color: #999;
+      color: @gray;
     }
   }
 }

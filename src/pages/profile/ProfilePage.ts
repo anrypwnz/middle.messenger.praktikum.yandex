@@ -4,7 +4,7 @@ import Button from '../../components/blocks/Button/Button';
 import Input from '../../components/blocks/Input/Input';
 import compile from '../../modules/compile';
 import tmpl from './profile.hbs'
-import validate from '../../utils/validation';
+import onValidate from '../../utils/onValidate';
 
 export default class ProfilePage extends Block {
     constructor() {
@@ -20,19 +20,11 @@ export default class ProfilePage extends Block {
     }
 
     onBlur(e: Event): void {
-        this.onValidate(e)
+        onValidate(e)
     }
 
     onFocus(e: Event): void {
-        this.onValidate(e)
-    }
-
-    onValidate(e: Event): void {
-        const target = e.target as HTMLInputElement;
-        const errorField = document.getElementById('profile-error')
-        if (errorField) {
-            errorField.textContent = validate(target)
-        }
+        onValidate(e)
     }
 
     onSubmit(e: Event): void {
@@ -78,12 +70,12 @@ export default class ProfilePage extends Block {
         })
 
         const inputFirstName = new Input({
-            id: 'first_name',
+            id: 'first-name',
             inputClass: 'form-input profile-form-input',
             labelClass: 'form-label profile-form-label',
             label: 'Имя',
-            name: 'first_name',
-            type: 'first_name',
+            name: 'first-name',
+            type: 'first-name',
             value: this.props.firstName,
             events: {
                 change: (e: Event) => this.onBlur(e),
@@ -92,12 +84,12 @@ export default class ProfilePage extends Block {
         })
 
         const inputSecondName = new Input({
-            id: 'second_name',
+            id: 'second-name',
             inputClass: 'form-input profile-form-input',
             labelClass: 'form-label profile-form-label',
             label: 'Фамилия',
-            name: 'second_name',
-            type: 'second_name',
+            name: 'second-name',
+            type: 'second-name',
             value: this.props.secondName,
             events: {
                 change: (e: Event) => this.onBlur(e),

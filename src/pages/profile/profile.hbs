@@ -25,23 +25,32 @@
                 <span class="profile-title">{{{title}}}</span>
                 <div class="form-group profile-form-group">
                     {{{inputEmail}}}
+                    <span id="error-email" class="form-error">Не правильный формат почты</span>
                 </div>
+
                 <div class="form-group profile-form-group">
                     {{{inputLogin}}}
+                    <span id="error-login" class="form-error">Логин должен состоять из латинских букв и цифр</span>
                 </div>
                 <div class="form-group profile-form-group">
                     {{{inputFirstName}}}
+                    <span id="error-first-name" class="form-error">Имя может состоять из букв</span>
                 </div>
+
                 <div class="form-group profile-form-group">
                     {{{inputSecondName}}}
+                    <span id="error-second-name" class="form-error">Фамилия может состоять из букв</span>
                 </div>
+
                 <div class="form-group profile-form-group">
                     {{{inputNickname}}}
+                    <span id="error-nickname" class="form-error">Никнейм должен состоять из латинских букв и цифр</span>
                 </div>
+
                 <div class="form-group profile-form-group">
                     {{{inputPhone}}}
+                    <span id="error-phone" class="form-error">Не правильный формат телефона</span>
                 </div>
-                <span id="profile-error" class="profile-error"> </span>
                 {{{submitButton}}}
                 {{{changePasswordButton}}}
             </form>
