@@ -8,9 +8,15 @@ const isPhone = (phone: string): boolean => {
     return reg.test(phone)
 }
 
-const isPassword = (password: string): string => {
-    const reg = /(?=.*\d)(?=.*[a-z/а-я])(?=.*[A-Z/А-Я]).{8,}/;
-    return reg.test(password) ? '' : 'Некорректный пароль'
+const isPassword = (password: string): boolean => {
+    const reg = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/
+    return reg.test(password)
+}
+const isPasswordSame = (repeatedPassword: string): boolean => {
+    const pass = (<HTMLInputElement>(document.querySelector('input[name="password"]'))).value;
+    console.log('####### pass ', pass)
+    console.log('####### repeatedPassword ', repeatedPassword)
+    return repeatedPassword === pass
 }
 
 const isValidName = (name: string): boolean => {
@@ -41,8 +47,14 @@ const validate = (target: HTMLInputElement): string[] => {
             }
             return errors;
         case 'password':
-        case 'password-repeat':
             if (!isPassword(value)) {
+                errors.find(i => i == id) || errors.push(id)
+            } else {
+                errors = errors.filter(i => i !== id)
+            }
+            return errors;
+        case 'password-repeat':
+            if (!isPasswordSame(value)) {
                 errors.find(i => i == id) || errors.push(id)
             } else {
                 errors = errors.filter(i => i !== id)

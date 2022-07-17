@@ -34,7 +34,7 @@ export default class FormRegistration extends Block {
             element && (errors = errors.concat(validate(element)))
             onValidate(e)
         }
-
+            console.log('####### errors ', errors)
         if (!errors.length) {
             console.log('####### formData ', formData)
         }
