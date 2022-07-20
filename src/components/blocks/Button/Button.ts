@@ -3,22 +3,20 @@ import compile from '../../../modules/Compile'
 import tmpl from './Button.hbs'
 import './Button.less'
 
-export default class Button extends Block {
-    constructor(props: {
-        text: string,
-        type?: string,
-        class?: string,
-        events?: {
-            click?: (e: Event) => void,
-            submit?: (e: Event) => void,
-        }
-        primary?: boolean,
-    }) {
-        super('div', props);
+type ButtonProps = {
+    text: string,
+    type?: string,
+    class?: string,
+    events?: {
+        click?: (e: Event) => void,
+        submit?: (e: Event) => void,
     }
+    primary?: boolean,
+};
 
-    componentDidUpdate(): boolean {
-        return true
+export default class Button extends Block<ButtonProps> {
+    public constructor(props: ButtonProps) {
+        super('div', props)
     }
 
     render(): DocumentFragment {

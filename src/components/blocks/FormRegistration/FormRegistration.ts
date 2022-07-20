@@ -9,7 +9,21 @@ import '../FormLogin/FormLogin.less'
 import validate from '../../../utils/validation';
 import onValidate from '../../../utils/onValidate';
 
-export default class FormRegistration extends Block {
+type FormRegistrationProps = {
+    value?: string,
+    email: string,
+    login: string,
+    firstName: string,
+    secondName: string,
+    phone: string,
+    password: string,
+    repeatPassword: string,
+    errors: {
+        email?: boolean,
+    },
+}
+
+export default class FormRegistration extends Block<FormRegistrationProps> {
     constructor() {
         super('div', {
             value: '',
@@ -20,6 +34,9 @@ export default class FormRegistration extends Block {
             phone: '',
             password: '',
             repeatPassword: '',
+            errors: {
+                email: false,
+            },
         });
     }
 
@@ -34,7 +51,7 @@ export default class FormRegistration extends Block {
             element && (errors = errors.concat(validate(element)))
             onValidate(e)
         }
-            console.log('####### errors ', errors)
+        console.log('####### errors ', errors)
         if (!errors.length) {
             console.log('####### formData ', formData)
         }
@@ -80,6 +97,8 @@ export default class FormRegistration extends Block {
             label: 'Почта',
             name: 'email',
             type: 'email',
+            error: this.props.errors.email,
+            errorText: 'bad email',
             value: this.props.login,
             autocomplete: 'email',
             events: {

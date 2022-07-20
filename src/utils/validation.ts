@@ -1,10 +1,10 @@
 const isEmail = (email: string): boolean => {
-    const reg = /^(?!.*(\.\.))[a-zA-Z0-9]+[-_\.\dA-Za-z]*@[a-zA-Z\d]+[-_\da-z]*\.[a-z]+$/;
+    const reg = /^(?!.*(\.\.))[a-zA-Z0-9]+[-_\.\dA-Za-z]*@[a-zA-Z\d]+[-_\da-z]*\.[a-z]+$/
     return reg.test(email)
 };
 
 const isPhone = (phone: string): boolean => {
-    const reg = /^(\+{0,})(\d{0,})([(]{1}\d{1,3}[)]{0,}){0,}(\s?\d+|\+\d{2,3}\s{1}\d+|\d+){1}[\s|-]?\d+([\s|-]?\d+){1,2}(\s){0,}$/gm;
+    const reg = /^(\+{0,})(\d{0,})([(]{1}\d{1,3}[)]{0,}){0,}(\s?\d+|\+\d{2,3}\s{1}\d+|\d+){1}[\s|-]?\d+([\s|-]?\d+){1,2}(\s){0,}$/gm
     return reg.test(phone)
 }
 
@@ -13,9 +13,7 @@ const isPassword = (password: string): boolean => {
     return reg.test(password)
 }
 const isPasswordSame = (repeatedPassword: string): boolean => {
-    const pass = (<HTMLInputElement>(document.querySelector('input[name="password"]'))).value;
-    console.log('####### pass ', pass)
-    console.log('####### repeatedPassword ', repeatedPassword)
+    const pass = (<HTMLInputElement>(document.querySelector('input[name="password"]'))).value
     return repeatedPassword === pass
 }
 
@@ -30,6 +28,7 @@ const isValidLogin = (login: string): boolean => {
 }
 let errors: string[] = [];
 const validate = (target: HTMLInputElement): string[] => {
+    console.log('####### target ', target)
     const {id, value} = target
     switch (id) {
         case 'email':
@@ -45,7 +44,7 @@ const validate = (target: HTMLInputElement): string[] => {
             } else {
                 errors = errors.filter(i => i !== id)
             }
-            return errors;
+            return errors
         case 'password':
             if (!isPassword(value)) {
                 errors.find(i => i == id) || errors.push(id)
@@ -59,7 +58,7 @@ const validate = (target: HTMLInputElement): string[] => {
             } else {
                 errors = errors.filter(i => i !== id)
             }
-            return errors;
+            return errors
         case 'first-name':
         case 'second-name':
         case 'nickname':
@@ -68,16 +67,16 @@ const validate = (target: HTMLInputElement): string[] => {
             } else {
                 errors = errors.filter(i => i !== id)
             }
-            return errors;
+            return errors
         case 'login':
             if (!isValidLogin(value)) {
                 errors.find(i => i == id) || errors.push(id)
             } else {
                 errors = errors.filter(i => i !== id)
             }
-            return errors;
+            return errors
         default:
-            return errors;
+            return errors
     }
 }
 export default validate

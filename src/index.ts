@@ -13,5 +13,4 @@ export function render(query: string, block: Block): Element {
 
     return root
 }
-
 render('#app', new IndexPage())

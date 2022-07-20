@@ -10,12 +10,17 @@ body {
 input {
   background-color: @background;
   border: none;
-  outline: none;
   color: @font-color;
   padding: 5px;
 
   &-webkit-autofill {
     background-color: @gray;
+  }
+
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 0 2px tomato;
+    border-radius: 3px;
   }
 }
 
@@ -29,8 +34,13 @@ input:-webkit-autofill:active {
 
 button {
   border: none;
-  outline: none;
   cursor: pointer;
+
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 0 2px tomato;
+    border-radius: 3px;
+  }
 }
 
 .root {

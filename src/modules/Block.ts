@@ -8,64 +8,64 @@ interface BlockMeta<P = any> {
 
 type Events = any
 
-export default class Block <P = any> {
+export default abstract class Block<Props extends Record<string, unknown>> {
     static EVENTS = {
         INIT: 'init',
         FLOW_CDM: 'flow:component-did-mount',
         FLOW_CDU: 'flow:component-did-update',
         FLOW_RENDER: 'flow:render'
-    } as const;
+    } as const
 
     protected id = nanoid()
     private readonly _meta: BlockMeta
-    protected _element: any
-    protected readonly props : P
+    protected _element: Element
+    protected readonly props: Props
     eventBus: () => EventBus<Events>
 
-    public constructor(tagName: string, props?: P) {
-        const eventBus = new EventBus<Events>();
+    protected constructor(tagName: string, props?: Props) {
+        const eventBus = new EventBus<Events>()
 
         this._meta = {
             tagName,
             props
         };
 
-        this.props = this._makePropsProxy(props || {} as P);
+        this.props = this._makePropsProxy(props || {} as Props)
 
-        this.eventBus = () => eventBus;
+        this.eventBus = () => eventBus
 
-        this._registerEvents(eventBus);
+        this._registerEvents(eventBus)
 
-        eventBus.emit(Block.EVENTS.INIT, this.props);
+        eventBus.emit(Block.EVENTS.INIT, this.props)
     }
 
-    _registerEvents(eventBus) {
+    private _registerEvents(eventBus: EventBus) {
         eventBus.on(Block.EVENTS.INIT, this.init.bind(this));
         eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
         eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
         eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this));
     }
 
-    _createResources() {
-        const { tagName } = this._meta;
+    private _createResources() {
+        const {tagName} = this._meta;
         this._element = this._createDocumentElement(tagName);
     }
 
-    init() {
+    init(): void {
         this._createResources();
         this.eventBus().emit(Block.EVENTS.FLOW_CDM, this.props);
     }
 
-    _componentDidMount() {
+    private _componentDidMount() {
         this.componentDidMount();
 
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
     }
 
-    _componentDidUpdate(oldProps, newProps) {
+    _componentDidUpdate(oldProps:Props, newProps: Props): void {
         const response = this.componentDidUpdate(oldProps, newProps);
         if (!response) {
             return;
@@ -73,29 +73,29 @@ export default class Block <P = any> {
         this._render();
     }
 
-    componentDidUpdate(oldProps, newProps) {
-        return true;
+    componentDidUpdate(oldProps: Props, newProps: Props): boolean {
+        return true
     }
 
-    setProps = nextProps => {
+    setProps = (nextProps: Props) => {
         if (!nextProps) {
-            return;
+            return
         }
-
-        Object.assign(this.props, nextProps);
+        console.log(nextProps)
+        return Object.assign(this.props, nextProps);
     };
 
     get element() {
-        return this._element;
+        return this._element
     }
 
-    _render() {
+    private _render() {
         const fragment = this.render();
 
         this._removeEvents()
         this._element!.innerHTML = ''
 
-        this._element!.appendChild(fragment)
+        this._element?.appendChild(fragment)
         this._addEvents()
     }
 
@@ -104,29 +104,29 @@ export default class Block <P = any> {
     }
 
     getContent(): HTMLElement {
-        return this.element!;
+        return this.element!
     }
 
-    _makePropsProxy(props) {
+    private _makePropsProxy(props: any) {
 
         return new Proxy(props, {
             get(target, prop) {
-                const value = target[prop];
-                return typeof value === 'function' ? value.bind(target) : value;
+                const value = target[prop]
+                return typeof value === 'function' ? value.bind(target) : value
             },
             set(target, prop, value) {
-                target[prop] = value;
+                target[prop] = value
 
-                this.eventBus().emit(Block.EVENTS.FLOW_CDU, {...target}, target);
-                return true;
+                this.eventBus?.emit(Block.EVENTS.FLOW_CDU, {...target}, target)
+                return true
             },
             deleteProperty() {
-                throw new Error('Нет доступа');
+                throw new Error('Нет доступа')
             }
         });
     }
 
-    _removeEvents() {
+    private _removeEvents() {
         const events: Record<string, () => void> = (this.props as any).events
 
         if (!events || !this._element) {
@@ -134,31 +134,31 @@ export default class Block <P = any> {
         }
 
         Object.entries(events).forEach(([event, listener]) => {
-            this._element!.addEventListener(event, listener)
+            this._element?.addEventListener(event, listener)
         })
     }
 
-    _addEvents() {
+    private _addEvents() {
         const events: Record<string, () => void> = (this.props as any).events
 
-        if(!events) {
+        if (!events) {
             return
         }
 
         Object.entries(events).forEach(([event, listener]) => {
-            this._element!.addEventListener(event, listener)
+            this._element?.addEventListener(event, listener)
         })
     }
 
-    _createDocumentElement(tagName) {
-        return document.createElement(tagName);
+    private _createDocumentElement(tagName: string): Element {
+        return document.createElement(tagName)
     }
 
-    show() {
-        this.getContent().style.display = 'block';
+    show(): void {
+        this.getContent().style.display = 'block'
     }
 
-    hide() {
-        this.getContent().style.display = 'none';
+    hide(): void {
+        this.getContent().style.display = 'none'
     }
 }
