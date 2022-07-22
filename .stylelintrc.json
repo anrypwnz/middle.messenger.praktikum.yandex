@@ -1,0 +1,14 @@
+{
+  "extends": "stylelint-config-standard",
+  "ignoreFiles": [
+    "dist/*",
+    "node-modules/*"
+  ],
+  "plugins":  [
+    "stylelint-order"
+  ],
+  "rules": {
+    "selector-type-no-unknown": null,
+    "string-quotes": "double"
+  }
+}
