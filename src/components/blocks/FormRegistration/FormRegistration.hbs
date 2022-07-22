@@ -1,31 +1,24 @@
-<form class="form" name="register">
+<form class="form" name="{{formName}}">
     <div class="form-group">
         {{{inputEmail}}}
-        <span id="error-email" class="form-error">Не правильный формат почты</span>
     </div>
     <div class="form-group">
         {{{inputLogin}}}
-        <span id="error-login" class="form-error">Логин должен состоять из латинских букв и цифр</span>
     </div>
     <div class="form-group">
         {{{inputFirstName}}}
-        <span id="error-first-name" class="form-error">Имя может состоять из букв</span>
     </div>
     <div class="form-group">
         {{{inputSecondName}}}
-        <span id="error-second-name" class="form-error">Фамилия может состоять из букв</span>
     </div>
     <div class="form-group">
         {{{inputPhone}}}
-        <span id="error-phone" class="form-error">Не правильный формат телефона</span>
     </div>
     <div class="form-group">
         {{{inputPassword}}}
-        <span id="error-password" class="form-error">Слишком простой пароль</span>
     </div>
     <div class="form-group">
         {{{inputRepeatPassword}}}
-        <span id="error-password-repeat" class="form-error">Пароли не совпадают</span>
     </div>
     {{{buttonSubmit}}}
     {{{buttonSignIn}}}

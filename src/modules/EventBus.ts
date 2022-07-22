@@ -1,44 +1,45 @@
-interface IListener {
-    [key: string]: IFunction[];
-}
-interface IFunction {
-    callback: () => void;
-}
+class EventBus {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    readonly listeners: Record<string, Function[]>
 
-export type Listener<T extends unknown[] = any[]> = (...args: T) => void
-
-class EventBus<E extends string = string, M extends { [K in E]: unknown[] } = Record<E, any[]>> {
-    private listeners: { [key in E]?: Listener<M[E]>[] } = {}
-
-    constructor(public listeners?: IListener[] | any) {
-        this.listeners = {};
+    constructor() {
+        // Объект для наполнения ожидаемыми событиями
+        this.listeners = {}
     }
 
-    on(event: string, callback: unknown): void {
-        if (this.listeners[event] === null || !this.listeners[event]) {
-            this.listeners[event] = [callback];
-        } else {
-            this.listeners[event].push(callback);
+    // Подписка на события
+    on(event: string, callback: () => void): void {
+        // Если свойства с названием события нет, создаём пустой массив для них
+        if (!this.listeners[event]) {
+            this.listeners[event] = []
         }
+        // Добавляем колбэк в массив соответствующих событий
+        this.listeners[event].push(callback)
     }
 
+    // Отписка от событий
     off(event: string, callback: () => void): void {
-        if (this.listeners[event] === null || !this.listeners[event]) {
-            throw new Error(`Нет события: ${event}`);
-        }
-        this.listeners[event] = this.listeners[event].filter(
-            (listener: () => void) => listener !== callback
-        );
+        this._checkEvent(event);
+        // Отфильтровываем все колбеки кроме совпавшего
+        this.listeners[event] = this.listeners[event]
+            .filter((listener) => listener !== callback)
     }
 
-    emit(event: string): void {
-        if (this.listeners[event] === null || !this.listeners[event]) {
-            throw new Error(`Нет события: ${event}`);
-        }
-        this.listeners[event].forEach(function (listener: () => void) {
-            listener();
+    // Отправка события
+    emit(event: string, ...args: unknown[]): void {
+        this._checkEvent(event)
+        this.listeners[event].forEach((listener) => {
+            // Вызываем событие, передаём аргументы
+            listener(...args)
         });
     }
+
+    _checkEvent(event: string): void {
+        // Если событий с таким именем нет, выкидываем ошибку
+        if (!this.listeners[event]) {
+            throw new Error(`Нет события: ${event}`)
+        }
+    }
 }
 
-export default EventBus;
+export default EventBus

@@ -6,33 +6,38 @@ import RegistrationPage from '../../../pages/registration/RegistrationPage';
 import {render} from '../../../index';
 import compile from '../../../modules/compile';
 import validate from '../../../utils/validation';
+import showErrors from '../../../utils/showErrors';
 import './FormLogin.less'
 
+type FormLoginProps = {
+    formName?: any,
+    value?: string,
+    login: string,
+    password: string,
+    errors: string[],
+}
 
-export default class FormLogin extends Block {
+export default class FormLogin extends Block<FormLoginProps> {
     constructor() {
         super('div', {
+            formName: 'login',
             value: '',
             login: '',
             password: '',
+            errors: [],
         });
     }
 
     onSubmit(e: Event): void {
         e.preventDefault()
-        const formElements = this.element.getElementsByTagName('input')
-        let errors: string[] = []
-        const formData: string[] = []
-
-        for (const element of formElements) {
-            formData[element.name] = element.value
-            this.onValidate(element)
-            errors = errors.concat(validate(element))
+        const formElements = document.forms[this.props.formName].elements
+        const formData: { [key: string]: string } = {}
+        for (const inputElement of formElements) {
+            formData[(inputElement as HTMLInputElement).name] = (inputElement as HTMLInputElement).value
+            this.props.errors = validate(inputElement as HTMLInputElement)
         }
-
-        if (!errors.length) {
-            console.log('####### formData ', formData)
-        }
+        showErrors(this.props.errors)
+        console.log('####### formData ', formData)
     }
 
     onSignUp(e: Event): void {
@@ -42,24 +47,14 @@ export default class FormLogin extends Block {
 
     onBlur(e: Event): void {
         const target = e.target as HTMLInputElement;
-        this.onValidate(target)
+        this.props.errors = validate(target)
+        showErrors(this.props.errors)
     }
 
     onFocus(e: Event): void {
         const target = e.target as HTMLInputElement;
-        this.onValidate(target)
-    }
-
-    onValidate(e: HTMLInputElement): void {
-        const formErrors = document.querySelectorAll<HTMLElement>('.form-error')
-        const errors = validate(e)
-        formErrors.forEach(i => {
-            i.style.display = 'none'
-        })
-        errors.forEach((i: string) => {
-            const errorField = document.getElementById(`error-${i}`)
-            errorField && (errorField.style.display = 'block')
-        })
+        this.props.errors = validate(target)
+        showErrors(this.props.errors)
     }
 
     protected render(): DocumentFragment {
@@ -89,6 +84,7 @@ export default class FormLogin extends Block {
             label: 'Логин',
             name: 'login',
             type: 'text',
+            errorText: 'Не верный формат логина',
             value: this.props.login,
             autocomplete: 'username',
             events: {
@@ -104,6 +100,7 @@ export default class FormLogin extends Block {
             label: 'Пароль',
             name: 'password',
             type: 'password',
+            errorText: 'Не верный формат пароля',
             value: this.props.password,
             autocomplete: 'new-password',
             events: {
@@ -117,6 +114,7 @@ export default class FormLogin extends Block {
             buttonSignUp,
             inputLogin,
             inputPassword,
+            formName: this.props.formName,
         })
     }
 }

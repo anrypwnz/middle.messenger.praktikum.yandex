@@ -6,9 +6,7 @@ interface BlockMeta<P = any> {
     props: P
 }
 
-type Events = any
-
-export default abstract class Block<Props extends Record<string, unknown>> {
+export default class Block<Props extends Record<string, unknown>> {
     static EVENTS = {
         INIT: 'init',
         FLOW_CDM: 'flow:component-did-mount',
@@ -20,68 +18,64 @@ export default abstract class Block<Props extends Record<string, unknown>> {
     private readonly _meta: BlockMeta
     protected _element: Element
     protected readonly props: Props
-    eventBus: () => EventBus<Events>
+    eventBus: () => EventBus
 
     protected constructor(tagName: string, props?: Props) {
-        const eventBus = new EventBus<Events>()
+        const eventBus = new EventBus()
 
         this._meta = {
             tagName,
             props
         };
 
-        this.props = this._makePropsProxy(props || {} as Props)
-
+        this.props = this._makePropsProxy({...props, id: this.id || {} as Props
+    })
         this.eventBus = () => eventBus
-
         this._registerEvents(eventBus)
-
-        eventBus.emit(Block.EVENTS.INIT, this.props)
+        eventBus.emit(Block.EVENTS.INIT)
     }
 
     private _registerEvents(eventBus: EventBus) {
-        eventBus.on(Block.EVENTS.INIT, this.init.bind(this));
-        eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
-        eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
-        eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this));
+        eventBus.on(Block.EVENTS.INIT, this.init.bind(this))
+        eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this))
+        eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this))
+        eventBus.on(Block.EVENTS.FLOW_RENDER, this._render.bind(this))
     }
 
     private _createResources() {
-        const {tagName} = this._meta;
-        this._element = this._createDocumentElement(tagName);
+        const {tagName} = this._meta
+        this._element = this._createDocumentElement(tagName)
     }
 
     init(): void {
-        this._createResources();
-        this.eventBus().emit(Block.EVENTS.FLOW_CDM, this.props);
+        this._createResources()
+        this.eventBus().emit(Block.EVENTS.FLOW_CDM)
     }
 
     private _componentDidMount() {
-        this.componentDidMount();
-
+        this.componentDidMount()
+        this.eventBus().emit(Block.EVENTS.FLOW_RENDER)
     }
 
-    componentDidMount(): void {
-        this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
-    }
-
-    _componentDidUpdate(oldProps:Props, newProps: Props): void {
-        const response = this.componentDidUpdate(oldProps, newProps);
-        if (!response) {
-            return;
-        }
-        this._render();
-    }
-
-    componentDidUpdate(oldProps: Props, newProps: Props): boolean {
+    componentDidMount(): boolean {
         return true
     }
 
-    setProps = (nextProps: Props) => {
+    private _componentDidUpdate(oldProps:Props, newProps: Props): void {
+        const response = this.componentDidUpdate(oldProps, newProps);
+        if (!response) {
+            this.eventBus().emit(Block.EVENTS.FLOW_RENDER)
+        }
+    }
+
+    public componentDidUpdate(oldProps: Props, newProps: Props): boolean {
+        return oldProps !== newProps;
+    }
+
+    public setProps = (nextProps: Props): void | Record<string, unknown> => {
         if (!nextProps) {
             return
         }
-        console.log(nextProps)
         return Object.assign(this.props, nextProps);
     };
 
@@ -104,11 +98,10 @@ export default abstract class Block<Props extends Record<string, unknown>> {
     }
 
     getContent(): HTMLElement {
-        return this.element!
+        return this.element as HTMLElement
     }
 
     private _makePropsProxy(props: any) {
-
         return new Proxy(props, {
             get(target, prop) {
                 const value = target[prop]
@@ -134,7 +127,7 @@ export default abstract class Block<Props extends Record<string, unknown>> {
         }
 
         Object.entries(events).forEach(([event, listener]) => {
-            this._element?.addEventListener(event, listener)
+            this._element?.removeEventListener(event, listener)
         })
     }
 
@@ -151,7 +144,9 @@ export default abstract class Block<Props extends Record<string, unknown>> {
     }
 
     private _createDocumentElement(tagName: string): Element {
-        return document.createElement(tagName)
+        const element = document.createElement(tagName);
+        element.setAttribute('data-id', this.id);
+        return element;
     }
 
     show(): void {

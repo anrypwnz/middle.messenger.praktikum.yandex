@@ -7,9 +7,10 @@ import {render} from '../../../index';
 import LoginPage from '../../../pages/login/LoginPage';
 import '../FormLogin/FormLogin.less'
 import validate from '../../../utils/validation';
-import onValidate from '../../../utils/onValidate';
+import showErrors from '../../../utils/showErrors';
 
 type FormRegistrationProps = {
+    formName?: any,
     value?: string,
     email: string,
     login: string,
@@ -18,14 +19,13 @@ type FormRegistrationProps = {
     phone: string,
     password: string,
     repeatPassword: string,
-    errors: {
-        email?: boolean,
-    },
+    errors: string[],
 }
 
 export default class FormRegistration extends Block<FormRegistrationProps> {
     constructor() {
         super('div', {
+            formName: 'registration',
             value: '',
             email: '',
             login: '',
@@ -34,27 +34,20 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
             phone: '',
             password: '',
             repeatPassword: '',
-            errors: {
-                email: false,
-            },
+            errors: [],
         });
     }
 
     onSubmit(e: Event): void {
         e.preventDefault()
-        const formElements = this.element.getElementsByTagName('input')
-        const formData: string[] = []
-        let errors: string[] = []
-
-        for (const element of formElements) {
-            formData[element.name] = element.value
-            element && (errors = errors.concat(validate(element)))
-            onValidate(e)
+        const formElements = document.forms[this.props.formName].elements
+        const formData: { [key: string]: string } = {}
+        for (const inputElement of formElements) {
+            formData[(inputElement as HTMLInputElement).name] = (inputElement as HTMLInputElement).value
+            this.props.errors = validate(inputElement as HTMLInputElement)
         }
-        console.log('####### errors ', errors)
-        if (!errors.length) {
-            console.log('####### formData ', formData)
-        }
+        showErrors(this.props.errors)
+        console.log('####### formData ', formData)
     }
 
     onSignIn(e: Event): void {
@@ -63,11 +56,15 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
     }
 
     onBlur(e: Event): void {
-        onValidate(e)
+        const target = e.target as HTMLInputElement
+        this.props.errors = validate(target)
+        showErrors(this.props.errors)
     }
 
     onFocus(e: Event): void {
-        onValidate(e)
+        const target = e.target as HTMLInputElement
+        this.props.errors = validate(target)
+        showErrors(this.props.errors)
     }
 
     protected render(): DocumentFragment {
@@ -97,8 +94,7 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
             label: 'Почта',
             name: 'email',
             type: 'email',
-            error: this.props.errors.email,
-            errorText: 'bad email',
+            errorText: 'Не правильный формат почты',
             value: this.props.login,
             autocomplete: 'email',
             events: {
@@ -115,6 +111,7 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
             name: 'login',
             type: 'text',
             value: this.props.login,
+            errorText: 'Логин должен состоять из латинских букв и цифр',
             autocomplete: 'username',
             events: {
                 change: (e: Event) => this.onBlur(e),
@@ -129,6 +126,7 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
             label: 'Имя',
             name: 'first-name',
             type: 'text',
+            errorText: 'Имя может состоять из букв',
             value: this.props.firstName,
             events: {
                 change: (e: Event) => this.onBlur(e),
@@ -143,6 +141,7 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
             label: 'Фамилия',
             name: 'second-name',
             type: 'text',
+            errorText: 'Фамилия может состоять из букв',
             value: this.props.secondName,
             events: {
                 change: (e: Event) => this.onBlur(e),
@@ -157,6 +156,7 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
             label: 'Телефон',
             name: 'phone',
             type: 'text',
+            errorText: 'Не правильный формат телефона',
             autocomplete: 'tel',
             value: this.props.phone,
             events: {
@@ -172,6 +172,7 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
             label: 'Пароль',
             name: 'password',
             type: 'password',
+            errorText: 'Слишком простой пароль',
             value: this.props.password,
             autocomplete: 'new-password',
             events: {
@@ -187,6 +188,7 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
             label: 'Пароль (еще раз)',
             name: 'password-repeat',
             type: 'password',
+            errorText: 'Пароли не совпадают',
             value: this.props.repeatPassword,
             events: {
                 change: (e: Event) => this.onBlur(e),
@@ -204,6 +206,9 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
             inputPhone,
             inputPassword,
             inputRepeatPassword,
+            formName: this.props.formName,
         })
+
+
     }
 }

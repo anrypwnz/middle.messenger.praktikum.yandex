@@ -26,53 +26,53 @@ const isValidLogin = (login: string): boolean => {
     const reg = /^[0-9a-zA-Z_.-]+$/
     return reg.test(login)
 }
+
 let errors: string[] = [];
 const validate = (target: HTMLInputElement): string[] => {
-    console.log('####### target ', target)
-    const {id, value} = target
-    switch (id) {
+    const {name, value} = target
+    switch (name) {
         case 'email':
             if (!isEmail(value)) {
-                errors.find(i => i == id) || errors.push(id)
+                errors.find(i => i == name) || errors.push(name)
             } else {
-                errors = errors.filter(i => i !== id)
+                errors = errors.filter(i => i !== name)
             }
             return errors;
         case 'phone':
             if (!isPhone(value)) {
-                errors.find(i => i == id) || errors.push(id)
+                errors.find(i => i == name) || errors.push(name)
             } else {
-                errors = errors.filter(i => i !== id)
+                errors = errors.filter(i => i !== name)
             }
             return errors
         case 'password':
             if (!isPassword(value)) {
-                errors.find(i => i == id) || errors.push(id)
+                errors.find(i => i == name) || errors.push(name)
             } else {
-                errors = errors.filter(i => i !== id)
+                errors = errors.filter(i => i !== name)
             }
             return errors;
         case 'password-repeat':
             if (!isPasswordSame(value)) {
-                errors.find(i => i == id) || errors.push(id)
+                errors.find(i => i == name) || errors.push(name)
             } else {
-                errors = errors.filter(i => i !== id)
+                errors = errors.filter(i => i !== name)
             }
             return errors
         case 'first-name':
         case 'second-name':
         case 'nickname':
             if (!isValidName(value)) {
-                errors.find(i => i == id) || errors.push(id)
+                errors.find(i => i == name) || errors.push(name)
             } else {
-                errors = errors.filter(i => i !== id)
+                errors = errors.filter(i => i !== name)
             }
             return errors
         case 'login':
             if (!isValidLogin(value)) {
-                errors.find(i => i == id) || errors.push(id)
+                errors.find(i => i == name) || errors.push(name)
             } else {
-                errors = errors.filter(i => i !== id)
+                errors = errors.filter(i => i !== name)
             }
             return errors
         default:

@@ -4,7 +4,7 @@ import Button from '../../components/blocks/Button/Button';
 import Input from '../../components/blocks/Input/Input';
 import compile from '../../modules/compile';
 import tmpl from './profile.hbs'
-import onValidate from '../../utils/onValidate';
+import onValidate from '../../utils/showErrors';
 
 export default class ProfilePage extends Block {
     constructor() {
