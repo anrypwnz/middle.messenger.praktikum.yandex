@@ -4,7 +4,9 @@ require("dotenv").config();
 
 const data = require('./static/testData');
 const app = express();
-const PORT = process.env.PORT || 3000
+let PORT;
+process.env.PORT ? PORT = process.env.PORT : PORT = 3000
+// const  = process.env.PORT || 3000
 
 app.set('view engine', 'hbs');
 
