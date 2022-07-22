@@ -3,7 +3,7 @@ const path = require('path');
 
 const data = require('./static/testData');
 const app = express();
-const PORT = process.env.PORT || PORT
+const PORT = process.env.PORT || 3000
 
 app.set('view engine', 'hbs');
 
