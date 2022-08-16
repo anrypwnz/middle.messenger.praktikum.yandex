@@ -1,12 +1,15 @@
-import Block from '../../../modules/Block';
-import tmpl from './FormLogin.hbs';
-import Button from '../Button/Button';
-import Input from '../Input/Input';
-import RegistrationPage from '../../../pages/registration/RegistrationPage';
-import {render} from '../../../index';
-import compile from '../../../modules/compile';
-import validate from '../../../utils/validation';
-import showErrors from '../../../utils/showErrors';
+import Block from '../../../modules/Block'
+import tmpl from './FormLogin.hbs'
+import Button from '../Button/Button'
+import Input from '../Input/Input'
+import RegistrationPage from '../../../pages/registration/RegistrationPage'
+import {render} from '../../../index'
+import compile from '../../../modules/compile'
+import validate from '../../../utils/validation'
+import showErrors from '../../../utils/showErrors'
+import {router} from '../../../utils'
+
+import auth from '../../../api/AuthApi'
 import './FormLogin.less'
 
 type FormLoginProps = {
@@ -33,10 +36,18 @@ export default class FormLogin extends Block<FormLoginProps> {
         const formElements = document.forms[this.props.formName].elements
         const formData: { [key: string]: string } = {}
         for (const inputElement of formElements) {
-            formData[(inputElement as HTMLInputElement).name] = (inputElement as HTMLInputElement).value
-            this.props.errors = validate(inputElement as HTMLInputElement)
+            if(inputElement.tagName === 'INPUT') {
+                formData[(inputElement as HTMLInputElement).name] = (inputElement as HTMLInputElement).value
+                this.props.errors = validate(inputElement as HTMLInputElement)
+            }
         }
         showErrors(this.props.errors)
+
+        auth.signIn(formData)
+            .then(res => {
+                console.log('####### res ', res)
+            })
+            .catch(e => console.error(e))
         console.log('####### formData ', formData)
     }
 
@@ -57,8 +68,15 @@ export default class FormLogin extends Block<FormLoginProps> {
         showErrors(this.props.errors)
     }
 
-    protected render(): DocumentFragment {
 
+    protected render(): DocumentFragment {
+        auth.checkAuth()
+            .then(res => {
+                if(res) {
+                    router.navigate('/messenger')
+                }
+            })
+            .catch(e => console.error(e))
         const buttonSubmit = new Button({
             text: 'Вход',
             class: 'btn-submit',
@@ -73,7 +91,8 @@ export default class FormLogin extends Block<FormLoginProps> {
             class: 'btn-option',
             type: 'button',
             events: {
-                click: (e: Event) => this.onSignUp(e),
+                submit:(e: Event) => this.onSignUp(e),
+                // click: (e: Event) => this.onSignUp(e),
             },
         })
 

@@ -5,26 +5,38 @@ import Input from '../../components/blocks/Input/Input';
 import compile from '../../modules/compile';
 import tmpl from './profile.hbs'
 import onValidate from '../../utils/showErrors';
+import auth from '../../api/AuthApi';
+import {router} from '../../utils';
+import validate from '../../utils/validation';
+import showErrors from '../../utils/showErrors';
 
-export default class ProfilePage extends Block {
+type FormProfileProps = {
+    displayName: string | null,
+    email: string,
+    login: string,
+    firstName: string,
+    secondName: string,
+    nickname: string,
+    phone: string,
+    avatar: string,
+    errors: string[],
+}
+
+export default class ProfilePage extends Block<FormProfileProps> {
     constructor() {
-        super('div', {
-            titleName: 'Иван',
-            email: 'ivan@mail.com',
-            login: 'ivanich',
-            firstName: 'Иван',
-            secondName: 'Иванов',
-            nickname: 'Иваныч',
-            phone: '89996661313',
-        });
+        super('div' );
     }
 
     onBlur(e: Event): void {
-        onValidate(e)
+        const target = e.target as HTMLInputElement;
+        this.props.errors = validate(target)
+        showErrors(this.props.errors)
     }
 
     onFocus(e: Event): void {
         onValidate(e)
+    }
+    changeAvatar(){
     }
 
     onSubmit(e: Event): void {
@@ -37,10 +49,32 @@ export default class ProfilePage extends Block {
         console.log('onSubmit', formData);
     }
 
+    init() {
+        console.log('####### init ', )
+        super.init()
+        auth.checkAuth()
+            .then((res: Response) => {
+                console.log('####### res ', res)
+                // @ts-ignore
+                const {id, displayName, email, firstName, secondName, login, phone, avatar} = res
+                
+                this.props.displayName = displayName
+                this.props.email = email
+                this.props.firstName = firstName
+                this.props.secondName = secondName
+                this.props.login = login
+                this.props.phone = phone
+                this.props.avatar = avatar
+                debugger
+                this.render()
+            })
+            .catch(e => console.error(e))
+    }
 
     protected render(): DocumentFragment {
+        console.log('####### render ', this.props)
 
-        const inputEmail = new Input({
+        const  inputEmail = new Input({
             id: 'email',
             inputClass: 'form-input profile-form-input',
             labelClass: 'form-label profile-form-label',
@@ -144,7 +178,7 @@ export default class ProfilePage extends Block {
         })
 
         return compile(tmpl, {
-            title: this.props.firstName,
+            title: this.props.displayName || this.props.firstName,
             inputEmail,
             inputLogin,
             inputFirstName,
@@ -152,7 +186,8 @@ export default class ProfilePage extends Block {
             inputNickname,
             inputPhone,
             submitButton,
-            changePasswordButton
+            changePasswordButton,
+            changeAvatar: this.changeAvatar,
         })
     }
 }

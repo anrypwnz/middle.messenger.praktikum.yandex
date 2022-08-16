@@ -85,10 +85,10 @@ export default class Block<Props extends Record<string, unknown>> {
 
     private _render() {
         const fragment = this.render();
-
         this._removeEvents()
-        this._element!.innerHTML = ''
 
+        console.log('####### this._element ', this._element)
+        this._element.innerHTML = ''
         this._element?.appendChild(fragment)
         this._addEvents()
     }
@@ -102,6 +102,7 @@ export default class Block<Props extends Record<string, unknown>> {
     }
 
     private _makePropsProxy(props: any) {
+
         return new Proxy(props, {
             get(target, prop) {
                 const value = target[prop]

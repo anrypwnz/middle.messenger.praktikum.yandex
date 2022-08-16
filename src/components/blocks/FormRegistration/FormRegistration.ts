@@ -1,13 +1,15 @@
-import Block from '../../../modules/Block';
-import tmpl from './FormRegistration.hbs';
-import Button from '../Button/Button';
-import Input from '../Input/Input';
-import compile from '../../../modules/compile';
-import {render} from '../../../index';
-import LoginPage from '../../../pages/login/LoginPage';
+import Block from '../../../modules/Block'
+import tmpl from './FormRegistration.hbs'
+import Button from '../Button/Button'
+import Input from '../Input/Input'
+import compile from '../../../modules/compile'
+import {render} from '../../../index'
+import LoginPage from '../../../pages/login/LoginPage'
 import '../FormLogin/FormLogin.less'
-import validate from '../../../utils/validation';
-import showErrors from '../../../utils/showErrors';
+import validate from '../../../utils/validation'
+import showErrors from '../../../utils/showErrors'
+import auth from '../../../api/AuthApi'
+import {router} from '../../../utils'
 
 type FormRegistrationProps = {
     formName?: any,
@@ -39,15 +41,26 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
     }
 
     onSubmit(e: Event): void {
+        console.log('####### e ', e)
         e.preventDefault()
-        const formElements = document.forms[this.props.formName].elements
         const formData: { [key: string]: string } = {}
+        const formElements = document.forms[this.props.formName].elements
         for (const inputElement of formElements) {
-            formData[(inputElement as HTMLInputElement).name] = (inputElement as HTMLInputElement).value
-            this.props.errors = validate(inputElement as HTMLInputElement)
+            if(inputElement.tagName === 'INPUT') {
+                formData[(inputElement as HTMLInputElement).name] = (inputElement as HTMLInputElement).value
+                this.props.errors = validate(inputElement as HTMLInputElement)
+            }
         }
         showErrors(this.props.errors)
         console.log('####### formData ', formData)
+        auth.signUp(formData)
+            .then(res => {
+                console.log('####### res ', res)
+            })
+            .catch(e => {
+
+                console.error(e)
+            })
     }
 
     onSignIn(e: Event): void {
@@ -65,6 +78,17 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
         const target = e.target as HTMLInputElement
         this.props.errors = validate(target)
         showErrors(this.props.errors)
+    }
+
+    init() {
+        super.init()
+        auth.checkAuth()
+            .then((res: Response) => {
+                if(Object.prototype.hasOwnProperty.call(res, 'id')) {
+                    router.navigate('/messenger')
+                }
+            })
+            .catch(e => console.error(e))
     }
 
     protected render(): DocumentFragment {
@@ -120,11 +144,11 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
         })
 
         const inputFirstName = new Input({
-            id: 'first-name',
+            id: 'first_name',
             inputClass: 'form-input',
             labelClass: 'form-label',
             label: 'Имя',
-            name: 'first-name',
+            name: 'first_name',
             type: 'text',
             errorText: 'Имя может состоять из букв',
             value: this.props.firstName,
@@ -135,11 +159,11 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
         })
 
         const inputSecondName = new Input({
-            id: 'second-name',
+            id: 'second_name',
             inputClass: 'form-input',
             labelClass: 'form-label',
             label: 'Фамилия',
-            name: 'second-name',
+            name: 'second_name',
             type: 'text',
             errorText: 'Фамилия может состоять из букв',
             value: this.props.secondName,
@@ -182,11 +206,11 @@ export default class FormRegistration extends Block<FormRegistrationProps> {
         })
 
         const inputRepeatPassword = new Input({
-            id: 'password-repeat',
+            id: 'password_repeat',
             inputClass: 'form-input',
             labelClass: 'form-label',
             label: 'Пароль (еще раз)',
-            name: 'password-repeat',
+            name: 'password_repeat',
             type: 'password',
             errorText: 'Пароли не совпадают',
             value: this.props.repeatPassword,

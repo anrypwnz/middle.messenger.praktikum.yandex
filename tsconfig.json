@@ -11,5 +11,7 @@
     "noUnusedParameters": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true
-  }
+  },
+  "include": ["src/**/*", "test/index.spec.ts"],
+  "exclude": ["node_modules"]
 }
